@@ -331,6 +331,26 @@ $$PREBID_GLOBAL$$.renderAd = function (doc, id) {
 
         const { height, width, ad, mediaType, adUrl: url, renderer } = bid;
 
+        // MOD start: add confiantWrap
+        if (typeof window.confiantWrap === 'function') {
+          const { bidder, adUnitCode } = bid;
+          utils.logInfo(`Staring to use confiantWrap ${id} - ${adUnitCode}`);
+
+          const size = bid.getSize();
+          const cdnHost = 'clarium.global.ssl.fastly.net';
+          const confiantId = 'ZTdRDvHUFck4drl8yz6JBZvkM80';
+          const result = window.confiantWrap(doc, ad, bidder, size, cdnHost, confiantId);
+          if (result) {
+            // Successful wrapped, return.
+            utils.logInfo(`Successfully wrap ${id} - ${adUnitCode}. Result = ${result}`);
+            setRenderSize(doc, width, height);
+            return;
+          }
+        }
+        // If failed / no wrapping, fallback to serve the ad normally
+        utils.logInfo(`Fallback to normal rendering for ${id}.`);
+        // MOD end: add confiantWrap
+
         if (renderer && renderer.url) {
           renderer.render(bid);
         } else if ((doc === document && !utils.inIframe()) || mediaType === 'video') {
