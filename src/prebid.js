@@ -332,7 +332,8 @@ $$PREBID_GLOBAL$$.renderAd = function (doc, id) {
         const { height, width, ad, mediaType, adUrl: url, renderer } = bid;
 
         // MOD start: add confiantWrap
-        if (typeof window.confiantWrap === 'function') {
+        // TODO: remove testing condition after confirmed
+        if (window.postMeta && window.postMeta.post_id === 269164 && typeof window.confiantWrap === 'function') {
           const { bidder, adUnitCode } = bid;
           utils.logInfo(`Staring to use confiantWrap ${id} - ${adUnitCode}`);
 
